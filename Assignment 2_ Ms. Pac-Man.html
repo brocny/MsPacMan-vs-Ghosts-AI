@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0055)https://ksvi.mff.cuni.cz/~dingle/2018/ai/ms_pacman.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<title>Assignment 2: Ms. Pac-Man</title>
+	<meta name="generator" content="LibreOffice 6.1.2.1 (Linux)">
+	<meta name="created" content="00:00:00">
+	<meta name="changed" content="2018-11-10T05:24:14.100924749">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		h1 { font-family: "Liberation Sans", sans-serif; font-size: 18pt }
+		h2 { font-family: "Liberation Sans", sans-serif; font-size: 16pt }
+		h4 { font-family: "Liberation Sans", sans-serif }
+		pre { font-family: monospace, monospace; font-size: 11pt }
+		h3.western { font-family: "Liberation Sans", sans-serif }
+		h3.cjk { font-family: "Noto Serif CJK SC" }
+		h3.ctl { font-family: "Lohit Devanagari" }
+		code { font-family: monospace, monospace; font-size: 11pt }
+	</style>
+</head>
+<body lang="en-US" dir="ltr" class="aliexpress_superstar_plugin_present"><h1>Assignment 2: Ms. Pac-Man</h1>
+<p><img src="./Assignment 2_ Ms. Pac-Man_files/mspac.jpg" name="Image1" align="bottom" width="251" height="201" border="0">
+
+</p>
+<p>This assignment is worth 20 points and has two parts.</p>
+<h2>1. Uniform-cost search (10 pts)</h2>
+<p><img src="./Assignment 2_ Ms. Pac-Man_files/ucs.png" name="Image2" align="bottom" width="255" height="130" border="0">
+
+</p>
+<p>Implement uniform-cost search in Java. Write a general-purpose
+implementation that can search any problem that implements this
+interface:</p>
+<pre><font color="#008800">// S = state type</font>
+<font color="#000080">interface</font><font color="#000000"> Problem&lt;S&gt; {</font>
+<font color="#000000">  S initialState();</font>
+<font color="#000000">  List&lt;Integer&gt; actions(S state);</font>
+<font color="#000000">  S result(S state, </font><font color="#000080">int</font><font color="#000000"> action);</font>
+<font color="#000000">  </font><font color="#000080">boolean</font><font color="#000000"> isGoal(S state);</font>
+<font color="#000000">  </font><font color="#000080">int</font><font color="#000000"> cost(S state, </font><font color="#000080">int</font><font color="#000000"> action);        </font>
+<font color="#000000">}</font></pre><p>
+(You may optionally modify this interface so that costs have type
+<code>double</code> rather than <code>int</code>.)</p>
+<p>Provide a <code>search()</code> method that returns a <code>Node&lt;S&gt;</code>
+representing the goal node that was found, or <code>null</code> if no
+goal was found. <code>Node&lt;S&gt;</code> should contain at least
+these fields:</p>
+<pre><font color="#000080">class</font><font color="#000000"> Node&lt;S&gt; {</font>
+<font color="#000000">  </font><font color="#000080">public</font><font color="#000000"> S state;</font>
+<font color="#000000">  </font><font color="#000080">public</font><font color="#000000"> Node&lt;S&gt; parent;  </font><font color="#008800">// parent node, or null if this is the start node</font>
+<font color="#000000">  </font><font color="#000080">public</font><font color="#000000"> </font><font color="#000080">int</font><font color="#000000"> action;  </font><font color="#008800">// the action we took to get here from the parent</font>
+<font color="#000000">  </font><font color="#a61717">…</font>
+<font color="#000000">}</font></pre><p>
+You may add any more fields and/or methods to <code>Node&lt;S&gt;</code>
+that you like.</p>
+<p>Your code should live in a class that looks like this:</p>
+<pre><font color="#008800">// uniform-cost search</font>
+<font color="#000080">class</font><font color="#000000"> Ucs {</font>
+<font color="#000000">  </font><font color="#000080">public</font><font color="#000000"> </font><font color="#000080">static</font><font color="#000000"> &lt;S&gt; Node&lt;S&gt; search(Problem&lt;S&gt; prob) {</font>
+<font color="#000000">    </font><font color="#a61717">…</font><font color="#000000"> your implementation here </font><font color="#a61717">…</font>
+<font color="#000000">  }     </font>
+<font color="#000000">} </font>      </pre><p>
+Then the caller can invoke your search method like this, for example:</p>
+<pre><font color="#000000">  Problem&lt;Integer&gt; p = </font><font color="#000080">new</font><font color="#000000"> MyPuzzle();</font>
+<font color="#000000">  Node&lt;Integer&gt; result = Ucs.</font>search<font color="#000000">(p);</font></pre><h3 class="western">
+hints</h3>
+<ul>
+	<li><p>Use a <code>PriorityQueue&lt;Node&lt;S&gt;&gt;</code> to
+	store the frontier.</p>
+	</li><li><p>Make your <code>Node</code> class implement
+	<code>Comparable&lt;Node&lt;S&gt;&gt;</code> and give it a <code>compareTo</code>
+	method that compares nodes by path cost.</p>
+	</li><li><p>Use a <code>HashMap&lt;S, Node&lt;S&gt;&gt;</code> to keep a
+	map from states to frontier nodes. This will allow you to quickly
+	check whether a given state is in the frontier. And if it is, this
+	will quickly give you that state's frontier node.</p>
+	</li><li><p>Use a <code>Set&lt;S&gt;</code> to remember all states in the
+	explored set.</p>
+	</li><li><p>When your algorithm discovers a new and cheaper path to an
+	existing frontier node, you have two choices:</p>
+</li></ul>
+<ol>
+	<ol>
+		<li><p>Remove the existing node from the queue, update its
+		attributes, then reinsert it. This is potentially slow if there are
+		many nodes in the frontier, since the <code>remove</code> method of
+		<code>PriorityQueue</code> runs in O(N).</p>
+		</li><li><p>Allocate a new node with the new attributes including the
+		lower path cost and add it to the queue, leaving the old node in
+		place. This will take time O(log N). If and when the old node comes
+		off the queue, you can simply ignore it since its state will
+		already be in the explored set. This technique is potentially
+		faster, at the cost of using more memory since old nodes live on
+		for some time in the queue.</p>
+	</li></ol>
+	<p>Either of these is OK for this assignment.</p>
+</ol>
+<ul>
+	<li><p>Test your uniform-cost search implementation on some simpler
+	<code>Problem</code> instances before attempting to use it in your
+	Ms. Pac-Man agent.</p>
+</li></ul>
+<h2>2. Ms. Pac-Man (10 pts)</h2>
+<p><img src="./Assignment 2_ Ms. Pac-Man_files/mspac.jpg" name="Image3" align="bottom" width="251" height="201" border="0">
+
+</p>
+<p>Use uniform-cost search to play Ms. Pac-Man.</p>
+<p>Download the Ms. Pac-Man Java code from the <a href="https://github.com/medovina/MsPacMan-vs-Ghosts-AI">MsPacMan-vs-Ghosts-AI</a>
+repository. Write your agent in the class
+<code>game.controllers.pacman.examples.MyPacMan</code>. I have
+provided a skeletal implementation in <code>MyPacMan.java</code>.</p>
+<p>I recommend the following basic approach. In your agent code,
+create an instance of the <code>Problem&lt;S&gt;</code> interface
+above and call <code>Ucs.search()</code> on every game tick. Perform
+a uniform-cost search over the physical maze graph, not the abstract
+tree of game states. (Be sure that you understand the difference
+between these.)</p>
+<p>Every possible position in the maze is a different node in the
+maze graph. There are about 1,000 of these (the exact number varies
+from level to level) and they are evenly spaced throughout the maze.
+Fortunately 1,000 is a small enough number that you can perform a
+uniform-cost search over this graph in under 40 ms (the per-tick time
+limit).</p>
+<p>The initial node for your search should be Ms. Pac-Man's current
+position. I recommend that every pellet be a goal node, unless it is
+close to a non-edible ghost. Edible ghosts also make great goal
+nodes. :)</p>
+<p>When <code>Ucs.search()</code> returns a goal <code>Node</code>,
+you can follow the parent chain all the way up to the initial node to
+find out which action was taken first. That is the direction that Ms.
+Pac-Man should go.</p>
+<p>Assign costs to graph edges as necessary to avoid going along
+undesirable paths. Any edge that ends at a non-edible ghost should
+have a very high cost. You may also want to give high costs to edges
+that are close to ghost positions, or that move in a direction toward
+the ghosts. If you want to be smarter, consider not only where the
+ghosts are now, but where they are heading.</p>
+<p>Remember that uniform-cost search (i.e. Dijkstra's algorithm) <b>does
+not work for negative edge weights</b>. So don't be tempted to assign
+negative weights to edges that lead to places you do want to go, such
+as power pellets – that won't work. A better approach is to make
+these be goal nodes.</p>
+<p>If you want your entry to be competitive in the tournament, there
+are many different techniques you could try. The API does give you a
+forward model, so you could attempt to search the abstract game state
+tree. There are some challenges there, however: the game is
+non-deterministic since the ghosts occasionally reverse direction
+randomly, and the branching factor is high if you allow Ms. Pac-Man
+to reverse direction. Searching the game tree is not necessary to
+achieve the minimum game score to get full credit for this assignment
+(see the next section).</p>
+<h4>scoring</h4>
+<p>I will test your agent using the main program in the class
+<code>EvaluationAgentConsole</code> in the
+<code>cz.cuni.mff.amis.pacman.tournament</code> package. That class
+is preconfigured to test your <code>MyPacMan</code> agent by playing
+30 games, each with a different random seed. Note that in each game
+Ms. Pac-Man initially has 3 lives and may potentially go through many
+different levels.</p>
+<p>To score 10 points for this part of the assignment, your agent
+must score an average of at least <b>10,000 points</b> per game. I
+will give partial credit for lower scores, but no credit for any
+agent that averages less than 5,000 points per game.</p>
+<p>All agents submitted before the soft deadline for this assignment
+will be entered into a <b>tournament</b><span style="font-weight: normal">.</span>
+ Entries will be ranked by highest average score.  In the tournament,
+I will evaluate agents by playing as many random games as necessary
+to ensure that the differences in average scores are statistically
+valid.</p>
+<h4>api</h4>
+<p>Study the API in <code>interface Game</code>; it has everything
+you need to find about the game state. Each maze graph node is
+represented by a unique integer. Here are some of the most important
+methods:</p>
+<ul>
+	<li><p style="margin-bottom: 0in"><code><font color="#000080">int</font></code><code><font color="#000000">
+	getCurPacManLoc()</font></code><font color="#000000"> </font>–
+	return Ms. Pac-Man's current position, i.e. the integer index of the
+	graph node where she is currently</p>
+	</li><li><p style="margin-bottom: 0in"><code><font color="#000080">int</font></code><code><font color="#000000">
+	getCurGhostLoc(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	whichGhost)</font></code><font color="#000000"> </font>– return
+	the given ghost's current position. Ghosts are numbered from 0 to 3.</p>
+	</li><li><p style="margin-bottom: 0in"><code><font color="#000080">int</font></code><code><font color="#000000">
+	getX(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	nodeIndex), </font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	getY(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	nodeIndex)</font></code><font color="#000000"> </font>- return the
+	X/Y pixel positions of the given graph node</p>
+	</li><li><p style="margin-bottom: 0in"><code><font color="#000080">int</font></code><code><font color="#000000">
+	getNeighbour(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	nodeIndex,</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	direction)</font></code><font color="#000000"> </font>– return the
+	given node's neighbor in the given direction, or -1 if none.
+	Directions are listed at the top of <code>interface Game</code>
+	(UP=0, RIGHT=1, etc.)</p>
+	</li><li><p style="margin-bottom: 0in"><code><font color="#000080">boolean</font></code><code><font color="#000000">
+	isEdible(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	whichGhost)</font></code><font color="#000000"> </font>– true if
+	the given ghost is currently edible</p>
+	</li><li><p style="margin-bottom: 0in"><code><font color="#000080">int</font></code><code><font color="#000000">
+	getEdibleTime(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	whichGhost)</font></code><font color="#000000"> </font>- the number
+	of remaining ticks during which the given ghost will be edible. (The
+	game normally runs at 25 ticks per second.)</p>
+	</li><li><p style="margin-bottom: 0in"><code><font color="#000080">int</font></code><code><font color="#000000">
+	getPillIndex(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	nodeIndex)</font></code><font color="#000000"> </font>– return the
+	index of the pill that is/was at the given position, or -1 if none.
+	Each pill in the maze has a unique index. Note that this method
+	returns the same value whether or not the pill has already been
+	eaten. You must call <code>checkPill</code> to find out whether the
+	pill still exists.</p>
+	</li><li><p style="margin-bottom: 0in"><code><font color="#000080">boolean</font></code><code><font color="#000000">
+	checkPill(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	pillIndex)</font></code><font color="#000000"> </font>– return
+	true if the given pill still exists, i.e. has not been eaten</p>
+	</li><li><p style="margin-bottom: 0in"><code><font color="#000080">int</font></code><code><font color="#000000">
+	getPathDistance(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	from, </font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	to)<br>
+</font></code><code><font color="#000080">double</font></code><code><font color="#000000">
+	getEuclideanDistance(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	from,</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	to)<br>
+</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	getManhattenDistance(</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	from,</font></code><code><font color="#000080">int</font></code><code><font color="#000000">
+	to)</font></code></p>
+	<p style="margin-bottom: 0in">Return various kinds of distances
+	between two nodes in the maze. The first of these is the
+	shortest-path distance walking through the maze without going
+	through walls. It uses a precomputed table so it is very fast (it
+	doesn't need to perform a depth-first search of its own!)</p>
+</li></ul>
+
+</body></html>

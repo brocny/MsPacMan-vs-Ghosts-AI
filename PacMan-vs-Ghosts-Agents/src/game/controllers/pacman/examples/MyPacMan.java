@@ -1,22 +1,47 @@
 package game.controllers.pacman.examples;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
 import game.PacManSimulator;
 import game.controllers.ghosts.game.GameGhosts;
 import game.controllers.pacman.PacManHijackController;
 import game.core.G;
 import game.core.Game;
+import game.core.GameView;
+import search.*;
 
 public final class MyPacMan extends PacManHijackController
 {	
 	@Override
 	public void tick(Game game, long timeDue) {
+		Problem<Integer> pacmanProblem = new PacmanProblem(game.copy());
 		
-		// Code your agent here.
+		Node<Integer> node = Ucs.search(pacmanProblem);
 		
-		// Dummy implementation: move in a random direction.  You won't live long this way,
-		int[] directions=game.getPossiblePacManDirs(false);	
-		pacman.set(directions[G.rnd.nextInt(directions.length)]);
+		if(node == null) {
+			System.err.println("Search returned null!");
+			return;
+		}
 		
+		if(node.parent == null) {
+			int[] directions = game.getPossiblePacManDirs(false);		
+			pacman.set(directions[G.rnd.nextInt(directions.length)]);
+			System.err.println("*** Choosing randomly ***");
+			return;
+		}
+		
+		List<Integer> states = new ArrayList<Integer>();
+		
+		while(node.parent.parent != null) {
+			states.add(node.state);
+			node = node.parent;
+		}
+		
+		//GameView.addPoints(game, Color.GREEN, states.stream().mapToInt(i -> i).toArray());
+		int action = node.action;
+		pacman.set(action);
 	}
 
 	public static void main(String[] args) {
