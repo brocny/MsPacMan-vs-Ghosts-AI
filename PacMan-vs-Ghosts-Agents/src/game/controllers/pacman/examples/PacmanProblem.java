@@ -89,8 +89,8 @@ public class PacmanProblem implements Problem<Integer> {
         for (int i = 0; i < Game.NUM_GHOSTS; i++) {
             int distanceToGhost = game.getPathDistance(game.getCurGhostLoc(i), targetState);
 
-            if (game.getEdibleTime(i) < 3 && distanceToGhost <= threshold)
-                cost += 10 + Math.pow(7, threshold - distanceToGhost);
+            if (game.getEdibleTime(i) < 2 && distanceToGhost <= threshold)
+                cost += Math.pow(6.5, threshold - distanceToGhost);
         }
         
         return cost;
